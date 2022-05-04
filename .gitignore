@@ -10,7 +10,7 @@ __pycache__/
 
 # init jinjing test pkg
 .idea 
-
+.results
 
 
 # Distribution / packaging

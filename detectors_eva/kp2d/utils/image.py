@@ -75,41 +75,41 @@ def image_grid(B, H, W, dtype, device, ones=True, normalized=False):
     grid = torch.stack(coords, dim=1)  # B3HW
     return grid
 
-
-def to_gray_normalized(images):
-    """Performs image normalization and converts images to grayscale (preserving dimensions)
-    
-    Parameters
-    ----------
-    images: torch.Tensor
-        Input images.
-
-    Returns
-    -------
-    normalized_images: torch.Tensor
-        Normalized grayscale images.
-    """
-    assert len(images.shape) == 4
-    images -= 0.5
-    images *= 0.225
-    normalized_images = images.mean(1).unsqueeze(1) 
-    return normalized_images
-
-
-def to_color_normalized(images):
-    """Performs image normalization and converts images to grayscale (preserving dimensions)
-    
-    Parameters
-    ----------
-    images: torch.Tensor
-        Input images.
-
-    Returns
-    -------
-    normalized_images: torch.Tensor
-        Normalized grayscale images.
-    """
-    assert len(images.shape) == 4
-    images -= 0.5
-    images *= 0.225
-    return images
+#
+# def to_gray_normalized(images):
+#     """Performs image normalization and converts images to grayscale (preserving dimensions)
+#
+#     Parameters
+#     ----------
+#     images: torch.Tensor
+#         Input images.
+#
+#     Returns
+#     -------
+#     normalized_images: torch.Tensor
+#         Normalized grayscale images.
+#     """
+#     assert len(images.shape) == 4
+#     images -= 0.5
+#     images *= 0.225
+#     normalized_images = images.mean(1).unsqueeze(1)
+#     return normalized_images
+#
+#
+# def to_color_normalized(images):
+#     """Performs image normalization and converts images to grayscale (preserving dimensions)
+#
+#     Parameters
+#     ----------
+#     images: torch.Tensor
+#         Input images.
+#
+#     Returns
+#     -------
+#     normalized_images: torch.Tensor
+#         Normalized grayscale images.
+#     """
+#     assert len(images.shape) == 4
+#     images -= 0.5
+#     images *= 0.225
+#     return images

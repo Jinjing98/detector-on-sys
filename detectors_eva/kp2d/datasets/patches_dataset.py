@@ -1,18 +1,12 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 import os
 import os.path
-from pathlib import Path
-
 import cv2
 import numpy as np
-import torch
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset
-from itertools import groupby
-from numpy import loadtxt
 from collections import defaultdict
 
-import sys
 class syth_dataset(Dataset):
     """
     HPatches dataset class.

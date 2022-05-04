@@ -1,31 +1,16 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
-import numpy as np
 import torch
-import torchvision.transforms as transforms
 from tqdm import tqdm
-# import sys,os
-# sys.path.append('.')
-# rom
-
-
 import os, sys
 current_dir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_dir)
-from descriptor_evaluation import *
-from detector_evaluation import *
-from detectors_eva.kp2d.utils.image import to_color_normalized,to_gray_normalized
-
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
+from detectors_eva.utils.descriptor_evaluation import *
+from detectors_eva.utils.detector_evaluation import *
+from detectors_eva.utils.img_process import to_gray_normalized, to_color_normalized
 
 
-# from  descriptor_evaluation import compute_homography, compute_matching_score
-# from  detector_evaluation import compute_repeatability
-
-# from  utils.image import to_color_normalized, to_gray_normalized
-
-def evaluate_keypoint_net_syth_data(data_loader, keypoint_net, output_shape, top_k, conf_threshold, use_color=True):
+def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color=True):
     """Keypoint net evaluation script.
 
     Parameters
@@ -60,6 +45,7 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net, output_shape, top
                 warped_image = to_gray_normalized(sample['tgt_norm'].cuda())
 
             score_1s, coord_1s, desc1s = keypoint_net(image)
+
             score_2s, coord_2s, desc2s = keypoint_net(warped_image)
             B, _, Hc, Wc = desc1s.shape
 
@@ -82,7 +68,9 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net, output_shape, top
 
                 #estimated GT H based on GT OF
 
-
+                # print(desc1.shape,score_1.shape,coord_1.shape)#coord_1: x_list,y_list
+                # print(sample['src'].shape,sample['of'].shape,sample['ov'].shape,score_1.shape,desc1.shape)
+                # sys.exit()
                 # Prepare data for eval!
                 data = {'image': sample['src'][b_i].numpy().squeeze(),# for vis
                         'image_shape' : (image.size()[2],image.size()[3]),#H W
