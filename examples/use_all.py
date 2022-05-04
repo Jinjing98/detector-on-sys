@@ -2,38 +2,16 @@ import torch
 from termcolor import colored
 from torch.utils.data import DataLoader, Dataset
 import pandas as pd
-import argparse
 from detectors_eva.kp2d.datasets.patches_dataset import syth_dataset
-from  detectors_eva.kp2d.evaluation.evaluate import evaluate_keypoint_net_syth_data
-from  detectors_eva.kp2d.networks.keypoint_net import KeypointNet
+from  detectors_eva.tradi_orb.evaluation.evaluate import evaluate_keypoint_net_syth_data_all
 
 
 
 
 def main():
 
-    # dataset_dir = "/home/jinjing/Projects/data/out_imgs/"
     dataset_dir = '/home/jinjing/Projects/new_data/dominik_data/'
 
-
-    parser = argparse.ArgumentParser(
-        description='Script for KeyPointNet testing',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--pretrained_model", type=str, help="pretrained model path",
-                        default="/home/jinjing/Projects/keypoints_comparision/git_src_code/kp2d/pretrained_models/v4.ckpt")
-    args = parser.parse_args()
-    checkpoint = torch.load(args.pretrained_model)
-    model_args = checkpoint['config']['model']['params']
-
-    # Create and load disp net
-    keypoint_net = KeypointNet(use_color=model_args['use_color'],
-                               do_upsample=model_args['do_upsample'],
-                               do_cross=model_args['do_cross'])
-    keypoint_net.load_state_dict(checkpoint['state_dict'])
-    keypoint_net = keypoint_net.cuda()
-    keypoint_net.eval()
-    print('Loaded KeypointNet from {}'.format(args.pretrained_model))
-    print('KeypointNet params {}'.format(model_args))
 
     # init data
     hp_dataset = syth_dataset(root_dir=dataset_dir, use_color=True)
@@ -50,12 +28,30 @@ def main():
     top_ks = [50,100,200,400]
     columns = ["top_k","N1","N2","repeat","loc_error","fail_cnt","success_cnt","avg_err"]
     df = pd.DataFrame(columns= columns)
+
+    method = 'agast_sift'
+    agast_type = '5_8'
+    trd = 5 #[5,10,15,20,25]
+    param_tuple = (agast_type,trd)
+
+    method = 'orb'
+    num4features = 200
+    fast_trd = 5  #similar to topk; num of features is num4features if trd is 0
+    param_tuple = (num4features,fast_trd)
+
+
+    method = 'AKAZE'
+    trd = 1e-4 #  [1e-4,5e-4,25e-4,125e-4]   # affaect the num of detected poitns
+    diff_type = 0 # 0,1,2,3
+    param_tuple = (trd,diff_type)
+
     for top_k in top_ks:
-        print(colored(f'Evaluating for -- top_k {top_k}','green'))
-        N1, N2, rep, loc, fail_cnt,avg_err, success_cnt= evaluate_keypoint_net_syth_data(
+        print(colored(f'Evaluating for {method} -- params {param_tuple}','green'))
+        N1, N2, rep, loc, fail_cnt,avg_err, success_cnt= evaluate_keypoint_net_syth_data_all(
+            method = method,
+            param = param_tuple,
             data_loader=data_loader,
-            keypoint_net=keypoint_net,
-            top_k=top_k,# use confidence?
+            # top_k=top_k,# use confidence?
             use_color=True,
             vis_flag=False
         )
@@ -78,7 +74,7 @@ def main():
 
     with pd.ExcelWriter("/home/jinjing/Projects/detector_sysdata/results/"+'eval.xlsx',
                         mode='a') as writer: # mode = 'wa' /'w'
-        df.to_excel(writer, sheet_name='kp2d')
+        df.to_excel(writer, sheet_name=method)
 
 
 

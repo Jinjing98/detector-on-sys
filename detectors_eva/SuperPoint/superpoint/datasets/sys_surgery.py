@@ -70,23 +70,30 @@ class syth_dataset_tf(BaseDataset):
 
 
         # self.files = paths
+
         files = paths.copy()
         tf.data.Dataset.map_parallel = lambda self, fn: self.map(
                 fn, num_parallel_calls=10) # num parallel calls
+        self.data_size = len(files['of'])
 
         return files
 
     def _get_data(self, files, split_name, **config):
-
         def _read_image(path):
             image = tf.io.read_file(path)
             image = tf.image.decode_png(image, channels=3)
+            #different from kp2d; there we use opencv to read img: RGB
+            # SWAP TO BGR
+            image  = tf.reverse(image,axis = [-1])
+            return image
 
-            print(image,tf.cast(image, tf.float32))
-            sys.exit()
-            return tf.cast(image, tf.float32)
+        def _preprocess(path):
+            #read img
+            image = tf.io.read_file(path)
+            image = tf.image.decode_png(image, channels=3)
+            image = tf.cast(image, tf.float32)
 
-        def _preprocess(image):
+            #process as grey
             image = tf.image.rgb_to_grayscale(image)
             # if config['preprocessing']['resize']:
             # resize = [240, 320]# False means original
@@ -112,8 +119,8 @@ class syth_dataset_tf(BaseDataset):
                 lambda item: tuple(tf.py_func(read_npy_file, [item], [tf.float32,])))
 
 
-        tgt_norm = tgt.map(_preprocess)
-        src_norm = src.map(_preprocess)
+        tgt_norm = names_tgt.map(_preprocess)
+        src_norm = names_src.map(_preprocess)
 
 
 

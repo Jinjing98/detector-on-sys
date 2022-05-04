@@ -10,7 +10,7 @@ from detectors_eva.utils.detector_evaluation import *
 from detectors_eva.utils.img_process import to_gray_normalized, to_color_normalized
 
 
-def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color=True):
+def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color=True,vis_flag = False):
     """Keypoint net evaluation script.
 
     Parameters
@@ -85,8 +85,7 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
 
                 # Compute repeatabilty and localization error
 
-                N1, N2, rep, loc_err = compute_repeatability_new(data, keep_k_points=top_k, distance_thresh=3,vis_flag=False
-                                                                 )
+                N1, N2, rep, loc_err = compute_repeatability_new(data, keep_k_points=top_k, distance_thresh=3,vis_flag=vis_flag)
                 # print('rep,loc_err',rep,loc_err)# 256 512
                 N_1.append(N1)
                 N_2.append(N2)
