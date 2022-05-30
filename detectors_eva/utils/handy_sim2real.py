@@ -7,16 +7,16 @@ from torchvision.utils import save_image
 import numpy as np
 from detectors_eva.utils import sim2real_util as util
 
-
-pts3d_path1 = '/home/jinjing/Projects/new_data/dominik_data/3Dcoordinates_sequences/sequences/scene_1/3Dcoordinates/coords0000.exr'
-pts3d_path2 = '/home/jinjing/Projects/new_data/dominik_data/3Dcoordinates_sequences/sequences/scene_1/3Dcoordinates/coords0005.exr'
-pose_path1 = '/home/jinjing/Projects/new_data/dominik_data/cam_poses_sequences/sequences/scene_1/cam_poses/pose0000.exr'
-pose_path2 = '/home/jinjing/Projects/new_data/dominik_data/cam_poses_sequences/sequences/scene_1/cam_poses/pose0005.exr'
-img_path1 = '/home/jinjing/Projects/new_data/dominik_data/translation_sequences/sequences/scene_1/translation/translation0000.png'
-img_path2 = '/home/jinjing/Projects/new_data/dominik_data/translation_sequences/sequences/scene_1/translation/translation0005.png'
-# named it with the first frame since we utilize its pts3d to compute the GT flow
-opt_gt_OF_path = '/home/jinjing/Projects/new_data/dominik_data/auto_OF_sequences/sequences/scene_1/optic_flow/of0000.npy'
-opt_warped_path = '/home/jinjing/Projects/new_data/dominik_data/auto_warp_sequences/sequences/scene_1/warped_img/warped0000.png'
+#
+# pts3d_path1 = '/home/jinjing/Projects/new_data/dominik_data/3Dcoordinates_sequences/sequences/scene_1/3Dcoordinates/coords0000.exr'
+# pts3d_path2 = '/home/jinjing/Projects/new_data/dominik_data/3Dcoordinates_sequences/sequences/scene_1/3Dcoordinates/coords0005.exr'
+# pose_path1 = '/home/jinjing/Projects/new_data/dominik_data/cam_poses_sequences/sequences/scene_1/cam_poses/pose0000.exr'
+# pose_path2 = '/home/jinjing/Projects/new_data/dominik_data/cam_poses_sequences/sequences/scene_1/cam_poses/pose0005.exr'
+# img_path1 = '/home/jinjing/Projects/new_data/dominik_data/translation_sequences/sequences/scene_1/translation/translation0000.png'
+# img_path2 = '/home/jinjing/Projects/new_data/dominik_data/translation_sequences/sequences/scene_1/translation/translation0005.png'
+# # named it with the first frame since we utilize its pts3d to compute the GT flow
+# opt_gt_OF_path = '/home/jinjing/Projects/new_data/dominik_data/auto_OF_sequences/sequences/scene_1/optic_flow/of0000.npy'
+# opt_warped_path = '/home/jinjing/Projects/new_data/dominik_data/auto_warp_sequences/sequences/scene_1/warped_img/warped0000.png'
 
 
 def compute_OF(pts3d_path1,pts3d_path2,pose_path1,pose_path2,img_path1,img_path2,opt_gt_OF_path):
@@ -78,9 +78,6 @@ def compute_OF(pts3d_path1,pts3d_path2,pose_path1,pose_path2,img_path1,img_path2
 	os.makedirs(os.path.dirname(opt_gt_OF_path), exist_ok=True)
 
 	np.save(opt_gt_OF_path,optical_flow_gt)
-	# print('hahhah',optical_flow_gt.shape,optical_flow_gt[0,0,:])
-
-
 	# convert to HSV and save
 	mag, ang = cv2.cartToPolar(optical_flow_gt[..., 0], optical_flow_gt[..., 1])
 	hsv_mask[..., 0] = ang * 180 / np.pi / 2

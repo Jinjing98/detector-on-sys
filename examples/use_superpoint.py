@@ -1,24 +1,16 @@
-# Copyright 2020 Toyota Research Institute.  All rights reserved.
-# Example usage: python scripts/eval_keypoint_net.sh --pretrained_model /data/models/kp2d/v4.pth --input_dir /data/datasets/kp2d/HPatches/
 from pathlib import Path
-import sys
 import pandas as pd
 from termcolor import colored
 from detectors_eva.SuperPoint.superpoint.datasets.sys_surgery import syth_dataset_tf
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
 from detectors_eva.SuperPoint.superpoint.evaluations.evaluate import evaluate_keypoint_net_syth_data_sp
 tf.config.set_visible_devices([], 'GPU')
+from detectors_eva.utils.args_init import init_args
 
-
-
-#
-#
 #below line of code will display the log for debug to see if it is real GPU
 # To find out which devices your operations and tensors are assigned to
 # tf.debugging.set_log_device_placement(True)
-
 
 # below code may be needed if we want the code to run on GPU correctly.
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -34,24 +26,9 @@ if gpus:
         # Memory growth must be set before GPUs have been initialized
         print(e)
 
-
-
-def main2():
-
-
-
-    warp_img_dir = "/home/jinjing/Projects/new_data/dataset_cholec/"#idx_video_frame
-    final_ori_img_dir =warp_img_dir
-    EXPER_PATH="/home/jinjing/Projects/keypoints_comparision/pretrained_models"
-
-
-
-    weights_name = "sp_v6"#args.weights_name""
-
-    weights_root_dir = Path(EXPER_PATH, 'saved_models')
-    weights_root_dir.mkdir(parents=True, exist_ok=True)
-    weights_dir = Path(weights_root_dir, weights_name)
-
+def main():
+    args, unknown = init_args().parse_known_args()
+    weights_dir = args.sp_model_path
     graph = tf.Graph()
     with tf.Session(graph=graph) as sess:
         tf.saved_model.loader.load(sess,
@@ -64,17 +41,12 @@ def main2():
         output_desc_tensors = graph.get_tensor_by_name(
             'superpoint/descriptors:0')
 
-
-
-
-
-        top_ks = [50,100]#,200,400]
-        columns = ["top_k","N1","N2","repeat","loc_error","fail_cnt","success_cnt","avg_err"]
+        top_ks = args.topk_SP
+        columns = args.cols_name
         df = pd.DataFrame(columns= columns)
 
         for top_k in top_ks:
             print(colored(f'Evaluating for -- top_k {top_k}','green'))
-
             # inti dataset
             dataset_dir = '/home/jinjing/Projects/new_data/dominik_data/'
             # need to reinit every epoch; since the last generator arrived its end in last loop
@@ -97,11 +69,10 @@ def main2():
                       columns=columns)
             df = df.append(df_curr, ignore_index=True)
 
-        with pd.ExcelWriter("/home/jinjing/Projects/detector_sysdata/results/"+'eval.xlsx',
+        with pd.ExcelWriter(args.result_path,
                             mode='a') as writer: # mode = 'wa' /'w'
             df.to_excel(writer, sheet_name='superpoint')
 
 if __name__ == '__main__':
-    # main()
-    main2()
+    main()
 
