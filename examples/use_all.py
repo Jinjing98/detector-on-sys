@@ -34,16 +34,16 @@ def main():
     trd = 5 #[5,10,15,20,25]
     param_tuple = (agast_type,trd)
 
-    method = 'orb'
-    num4features = 200
-    fast_trd = 5  #similar to topk; num of features is num4features if trd is 0
-    param_tuple = (num4features,fast_trd)
+    # method = 'orb'
+    # num4features = 200
+    # fast_trd = 5  #similar to topk; num of features is num4features if trd is 0
+    # param_tuple = (num4features,fast_trd)
 
 
-    method = 'AKAZE'
-    trd = 1e-4 #  [1e-4,5e-4,25e-4,125e-4]   # affaect the num of detected poitns
-    diff_type = 0 # 0,1,2,3
-    param_tuple = (trd,diff_type)
+    # method = 'AKAZE'
+    # trd = 1e-4 #  [1e-4,5e-4,25e-4,125e-4]   # affaect the num of detected poitns
+    # diff_type = 0 # 0,1,2,3
+    # param_tuple = (trd,diff_type)
 
     for top_k in top_ks:
         print(colored(f'Evaluating for {method} -- params {param_tuple}','green'))
