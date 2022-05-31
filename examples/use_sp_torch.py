@@ -1,30 +1,17 @@
-import torch
-from termcolor import colored
 from torch.utils.data import DataLoader, Dataset
 import pandas as pd
 from detectors_eva.kp2d.datasets.patches_dataset import syth_dataset
-from  detectors_eva.kp2d.evaluation.evaluate import evaluate_keypoint_net_syth_data
-from  detectors_eva.kp2d.networks.keypoint_net import KeypointNet
 from detectors_eva.utils.args_init import init_args
 from detectors_eva.utils.util_result import write_excel
-
+from termcolor import colored
+from detectors_eva.SuperPoint_torch.evaluations_sp_torch.evaluate import evaluate_keypoint_net_syth_data_sp
+from detectors_eva.SuperPoint_torch.evaluations_sp_torch.superpoint_net import get_sp_model
 args, unknown = init_args().parse_known_args()
 dataset_dir = args.dataset_prefix
-kp2d_model_path  = args.kp2d_model_path
+sp_model = get_sp_model(args)
+
 def main():
 
-    checkpoint = torch.load(args.kp2d_model_path)
-    model_args = checkpoint['config']['model']['params']
-
-    # Create and load disp net
-    keypoint_net = KeypointNet(use_color=model_args['use_color'],
-                               do_upsample=model_args['do_upsample'],
-                               do_cross=model_args['do_cross'])
-    keypoint_net.load_state_dict(checkpoint['state_dict'])
-    keypoint_net = keypoint_net.cuda()
-    keypoint_net.eval()
-    print('Loaded KeypointNet from {}'.format(args.kp2d_model_path))
-    print('KeypointNet params {}'.format(model_args))
 
     # init data
     hp_dataset = syth_dataset(root_dir=dataset_dir, use_color=True)
@@ -36,15 +23,14 @@ def main():
                              worker_init_fn=None,
                              sampler=None)
 
-
-    top_ks = args.topk_kp2d
+    top_ks = args.topk_SP
     columns = args.cols_name
     df = pd.DataFrame(columns= columns)
     for top_k in top_ks:
         print(colored(f'Evaluating for -- top_k {top_k}','green'))
-        N1, N2, rep, loc, fail_cnt,avg_err, success_cnt= evaluate_keypoint_net_syth_data(
+        N1, N2, rep, loc, fail_cnt,avg_err, success_cnt = evaluate_keypoint_net_syth_data_sp(
             data_loader=data_loader,
-            keypoint_net=keypoint_net,
+            sp_model=sp_model,
             top_k=top_k,# use confidence?
             use_color=True,
             vis_flag=False
@@ -61,7 +47,7 @@ def main():
         df_curr = pd.DataFrame([[None,None,top_k,N1,N2,rep,loc,fail_cnt,success_cnt,avg_err]],
                   columns=columns)
         df = df.append(df_curr, ignore_index=True)
-    write_excel(args.result_path,'kp2d',df)
+    write_excel(args.result_path,'sp2',df)
 
 
 if __name__ == '__main__':

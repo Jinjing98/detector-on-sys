@@ -48,6 +48,7 @@ def to_color_normalized(images):
     normalized_images: torch.Tensor
         Normalized grayscale images.
     """
+
     assert len(images.shape) == 4
     images -= 0.5
     images *= 0.225

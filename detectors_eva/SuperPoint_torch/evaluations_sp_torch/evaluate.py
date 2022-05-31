@@ -8,9 +8,10 @@ sys.path.append(current_dir)
 from detectors_eva.utils.descriptor_evaluation import *
 from detectors_eva.utils.detector_evaluation import *
 from detectors_eva.utils.img_process import to_gray_normalized, to_color_normalized
+from detectors_eva.SuperPoint_torch.evaluations_sp_torch.process_vis_util import bgr2gray
 
 
-def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color=True,vis_flag = False):
+def evaluate_keypoint_net_syth_data_sp(data_loader, sp_model,  top_k, use_color=True,vis_flag = False):
     """Keypoint net evaluation script.
 
     Parameters
@@ -26,8 +27,8 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
     use_color: bool
         Use color or grayscale images.
     """
-    keypoint_net.eval()
-    keypoint_net.training = False
+    # keypoint_net.eval()
+    # keypoint_net.training = False
 
     N_1,N_2 = [], []
     localization_err, repeatability = [], []
@@ -36,17 +37,38 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
 
     with torch.no_grad():
         for i, sample in tqdm(enumerate(data_loader), desc="evaluate_keypoint_net"):
-            # b_size = sample['src_norm'].shape[0]
-            if use_color:
-                image = to_color_normalized(sample['src_norm'].cuda())
-                warped_image = to_color_normalized(sample['tgt_norm'].cuda())
-            else:
-                image = to_gray_normalized(sample['src_norm'].cuda())
-                warped_image = to_gray_normalized(sample['tgt_norm'].cuda())
-            score_1s, coord_1s, desc1s = keypoint_net(image)
-            score_2s, coord_2s, desc2s = keypoint_net(warped_image)
-            print('safdsafsdf',coord_1s.shape, desc1s.shape, score_1s.shape)
+            # # b_size = sample['src_norm'].shape[0]
+            # if use_color:
+            #     image = to_color_normalized(sample['src_norm'].cuda())
+            #     warped_image = to_color_normalized(sample['tgt_norm'].cuda())
+            # else:
+            #     image = to_gray_normalized(sample['src_norm'].cuda())
+            #     warped_image = to_gray_normalized(sample['tgt_norm'].cuda())
+
+            # image = bgr2gray(sample['src_norm'].cuda())
+            # warped_image = bgr2gray(sample['tgt_norm'].cuda())
+            image = to_gray_normalized(sample['src_norm'].cuda()).squeeze()
+            warped_image = to_gray_normalized(sample['tgt_norm'].cuda()).squeeze()
+
+            # score_1s, coord_1s, desc1s = keypoint_net(image)
+            # score_2s, coord_2s, desc2s = keypoint_net(warped_image)
+
+            coord_1s_src, desc1s, score_1s = sp_model.run2(image,None)
+            coord_2s_src, desc2s, score_2s = sp_model.run2(warped_image,None)
+
+            coord_1s = coord_1s_src[:,:2,:,None]
+            desc1s = desc1s[:,:,:,None]
+            score_1s = coord_1s_src[:,2:,:,None]
+
+            coord_2s = coord_2s_src[:,:2,:,None]
+            desc2s = desc2s[:,:,:,None]
+            score_2s = coord_2s_src[:,2:,:,None]
+            # print('safdsafsdf',coord_1s.shape, desc1s.shape, score_1s.shape)
+
+
             B, _, Hc, Wc = desc1s.shape
+
+            # print('sdfsd',coord_1.shape,score_1.shape,desc1.shape)
             for b_i in range(B):
                 coord_1 = coord_1s[b_i:b_i+1]
                 coord_2 = coord_2s[b_i:b_i+1]
@@ -62,8 +84,6 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
                 desc1 = desc1.view(256, Hc, Wc).view(256, -1).t().cpu().numpy()
                 desc2 = desc2.view(256, Hc, Wc).view(256, -1).t().cpu().numpy()
 
-                print('before metric',score_1.shape,desc1.shape)
-
 
                 #estimated GT H based on GT OF
 
@@ -72,7 +92,7 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
                 # sys.exit()
                 # Prepare data for eval!
                 data = {'image': sample['src'][b_i].numpy().squeeze(),# for vis
-                        'image_shape' : (image.size()[2],image.size()[3]),#H W
+                        'image_shape' : (image.size()[1],image.size()[2]),#H W
                         'warped_image': sample['tgt'][b_i].numpy().squeeze(), #for vis
                         # 'homography': sample['homography'].squeeze().numpy(),
                         'of': sample['of'][b_i].numpy().squeeze(),  #squeeze?
@@ -105,4 +125,4 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
 
     return np.nanmean(N_1),np.nanmean(N_2),np.nanmean(repeatability), np.nanmean(localization_err), \
            np.nanmean(fail_cnt),np.nanmean(avg_err),np.nanmean(success_count)
-
+    #

@@ -7,6 +7,7 @@ tf.disable_v2_behavior()
 from detectors_eva.SuperPoint.superpoint.evaluations.evaluate import evaluate_keypoint_net_syth_data_sp
 tf.config.set_visible_devices([], 'GPU')
 from detectors_eva.utils.args_init import init_args
+from detectors_eva.utils.util_result import write_excel
 
 #below line of code will display the log for debug to see if it is real GPU
 # To find out which devices your operations and tensors are assigned to
@@ -48,7 +49,7 @@ def main():
         for top_k in top_ks:
             print(colored(f'Evaluating for -- top_k {top_k}','green'))
             # inti dataset
-            dataset_dir = '/home/jinjing/Projects/new_data/dominik_data/'
+            dataset_dir = args.dataset_prefix
             # need to reinit every epoch; since the last generator arrived its end in last loop
             hp_dataset = syth_dataset_tf(root_dir=dataset_dir, use_color=True)
             generators = hp_dataset.get_training_set()
@@ -65,13 +66,11 @@ def main():
             print('success count {:.3f}'.format(success_cnt))
             print('avg err {:.3f}'.format(avg_err))
 
-            df_curr = pd.DataFrame([[top_k,N1,N2,rep,loc,fail_cnt,success_cnt,avg_err]],
+            df_curr = pd.DataFrame([[None,None,top_k,N1,N2,rep,loc,fail_cnt,success_cnt,avg_err]],
                       columns=columns)
             df = df.append(df_curr, ignore_index=True)
+        write_excel(args.result_path,'superpoint',df)
 
-        with pd.ExcelWriter(args.result_path,
-                            mode='a') as writer: # mode = 'wa' /'w'
-            df.to_excel(writer, sheet_name='superpoint')
 
 if __name__ == '__main__':
     main()
