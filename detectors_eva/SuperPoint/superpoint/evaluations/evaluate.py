@@ -88,7 +88,6 @@ def  evaluate_keypoint_net_syth_data_sp(sess,top_k,input_img_tensor,output_prob_
         if len(N_1) == data_size:
             print('done with evalution on this epoch!')
             break
-
     return np.nanmean(N_1),np.nanmean(N_2),np.nanmean(repeatability), np.nanmean(localization_err), \
            np.nanmean(fail_cnt),np.nanmean(avg_err),np.nanmean(success_count)
 

@@ -24,7 +24,7 @@ def init_args():
     # dataset dir
     parser.add_argument('--dataset_prefix', type=str, default='/home/jinjing/Projects/new_data/dominik_data/')
     parser.add_argument('--dataset_prefix_pts3d', type=str, default='/home/jinjing/Projects/new_data/dominik_data/')
-    parser.add_argument('--batch_size', type=int, default=20)# auto adjust within the training script
+    parser.add_argument('--batch_size', type=int, default=2)# auto adjust within the training script
 
 
 
@@ -46,7 +46,7 @@ def init_args():
 
     # Superpoint params
     parser.add_argument('--sp_model_path', type=str, default="/home/jinjing/Projects/keypoints_comparision/pretrained_models/saved_models/sp_v6")
-    parser.add_argument('--topk_SP',type=int,nargs = '*',default=[50,100,200,400])# both backbone(for old) and dataset param
+    parser.add_argument('--topk_SP',type=int,nargs = '*',default=[50,100])# both backbone(for old) and dataset param
 
 
 
@@ -88,7 +88,7 @@ def init_args():
       help='Path to pretrained weights file (default: superpoint_v1.pth).')
     parser.add_argument('--nms_dist', type=int, default=4,
       help='Non Maximum Suppression (NMS) dis# Remove points this close to the border.tance (default: 4).')
-    parser.add_argument('--topk_sp', type=int, default=3000)# prefilter
+    parser.add_argument('--topk_sp', type=int, default=2000)# prefilter
     #have nms on will be quite time consuming during training!
     parser.add_argument('--nms_flag',type=ParseBoolean,default=False)
     # parser.add_argument('--sample_mode', type=str, default='topk')# KDT

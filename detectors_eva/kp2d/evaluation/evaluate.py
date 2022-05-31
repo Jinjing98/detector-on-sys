@@ -45,7 +45,6 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
                 warped_image = to_gray_normalized(sample['tgt_norm'].cuda())
             score_1s, coord_1s, desc1s = keypoint_net(image)
             score_2s, coord_2s, desc2s = keypoint_net(warped_image)
-            print('safdsafsdf',coord_1s.shape, desc1s.shape, score_1s.shape)
             B, _, Hc, Wc = desc1s.shape
             for b_i in range(B):
                 coord_1 = coord_1s[b_i:b_i+1]

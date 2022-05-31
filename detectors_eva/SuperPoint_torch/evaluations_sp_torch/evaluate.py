@@ -47,8 +47,8 @@ def evaluate_keypoint_net_syth_data_sp(data_loader, sp_model,  top_k, use_color=
 
             # image = bgr2gray(sample['src_norm'].cuda())
             # warped_image = bgr2gray(sample['tgt_norm'].cuda())
-            image = to_gray_normalized(sample['src_norm'].cuda()).squeeze()
-            warped_image = to_gray_normalized(sample['tgt_norm'].cuda()).squeeze()
+            image = to_gray_normalized(sample['src_norm'].cuda()).squeeze(1)
+            warped_image = to_gray_normalized(sample['tgt_norm'].cuda()).squeeze(1)
 
             # score_1s, coord_1s, desc1s = keypoint_net(image)
             # score_2s, coord_2s, desc2s = keypoint_net(warped_image)
@@ -121,7 +121,7 @@ def evaluate_keypoint_net_syth_data_sp(data_loader, sp_model,  top_k, use_color=
                 avg_error.append(avg_err)
                 success_count.append(success_cnt)
                 # sys.exit()
-
+    print(N_1)
 
     return np.nanmean(N_1),np.nanmean(N_2),np.nanmean(repeatability), np.nanmean(localization_err), \
            np.nanmean(fail_cnt),np.nanmean(avg_err),np.nanmean(success_count)
