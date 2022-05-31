@@ -47,7 +47,7 @@ def main():
         df_curr = pd.DataFrame([[None,None,top_k,N1,N2,rep,loc,fail_cnt,success_cnt,avg_err]],
                   columns=columns)
         df = df.append(df_curr, ignore_index=True)
-    write_excel(args.result_path,'sp2',df)
+    write_excel(args.result_path,'superpoint_torch',df)
 
 
 if __name__ == '__main__':

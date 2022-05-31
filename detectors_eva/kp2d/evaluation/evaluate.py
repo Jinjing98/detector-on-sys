@@ -61,7 +61,6 @@ def evaluate_keypoint_net_syth_data(data_loader, keypoint_net,  top_k, use_color
                 desc1 = desc1.view(256, Hc, Wc).view(256, -1).t().cpu().numpy()
                 desc2 = desc2.view(256, Hc, Wc).view(256, -1).t().cpu().numpy()
 
-                print('before metric',score_1.shape,desc1.shape)
 
 
                 #estimated GT H based on GT OF

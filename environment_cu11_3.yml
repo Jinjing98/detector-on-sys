@@ -1,0 +1,23 @@
+name: sys_env
+channels:
+  - menpo
+  - pytorch
+  - anaconda
+  - defaults
+dependencies:
+  - python=3.7
+  - pytorch
+  - torchvision
+  - cudatoolkit=11.3
+  - pip
+  - pip:
+      - matplotlib==3.2
+      - pandas
+      - termcolor
+      - tqdm
+      - yacs
+      - openpyxl
+      - mathutils
+      - pillow==6.1
+      - opencv
+

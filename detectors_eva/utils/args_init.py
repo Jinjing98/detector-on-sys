@@ -24,7 +24,7 @@ def init_args():
     # dataset dir
     parser.add_argument('--dataset_prefix', type=str, default='/home/jinjing/Projects/new_data/dominik_data/')
     parser.add_argument('--dataset_prefix_pts3d', type=str, default='/home/jinjing/Projects/new_data/dominik_data/')
-    parser.add_argument('--batch_size', type=int, default=2)# auto adjust within the training script
+    parser.add_argument('--batch_size', type=int, default=20)# auto adjust within the training script
 
 
 
@@ -32,8 +32,8 @@ def init_args():
     # param for data generation
     parser.add_argument('--start_idx', type=str, default='0000')
     parser.add_argument('--step_within_pair', type=int, default=5)# auto adjust within the training script
-    parser.add_argument('--step_between_pairs', type=int, default=10)# auto adjust within the training script
-    parser.add_argument('--max_num_pairs_per_scene', type=int, default=3)# depending on the choice of step given fixed 100 frames
+    parser.add_argument('--step_between_pairs', type=int, default=2)# auto adjust within the training script
+    parser.add_argument('--max_num_pairs_per_scene', type=int, default=45)# depending on the choice of step given fixed 100 frames
 
     # result excel path
     parser.add_argument('--result_path', type=str, default='/home/jinjing/Projects/detector_sysdata/results/eval.xlsx')
@@ -41,12 +41,12 @@ def init_args():
 
     # KP2D params
     parser.add_argument('--kp2d_model_path', type=str, default="/home/jinjing/Projects/keypoints_comparision/git_src_code/kp2d/pretrained_models/v4.ckpt")
-    parser.add_argument('--topk_kp2d',type=int,nargs = '*',default=[50,100,200,400])# both backbone(for old) and dataset param
+    parser.add_argument('--topk_kp2d',type=int,nargs = '*',default=[50,100,500,1000])# both backbone(for old) and dataset param
 
 
     # Superpoint params
     parser.add_argument('--sp_model_path', type=str, default="/home/jinjing/Projects/keypoints_comparision/pretrained_models/saved_models/sp_v6")
-    parser.add_argument('--topk_SP',type=int,nargs = '*',default=[50,100])# both backbone(for old) and dataset param
+    parser.add_argument('--topk_SP',type=int,nargs = '*',default=[50,100,500,1000])# both backbone(for old) and dataset param
 
 
 
@@ -56,16 +56,16 @@ def init_args():
     # ORB params
     parser.add_argument('--num4features_set',type=int,nargs = '*',default=[100,200,400])# both backbone(for old) and dataset param
     # similar to topk; num of features is num4features if trd is 0
-    parser.add_argument('--fast_trd_set',type=int,nargs = '*',default=[0,5,10])# both backbone(for old) and dataset param
+    parser.add_argument('--fast_trd_set',type=int,nargs = '*',default=[0,2,5,10])# both backbone(for old) and dataset param
 
 
     # AKAZE params
-    parser.add_argument('--trd_set',type=int,nargs = '*',default=[1e-4,5e-4])#,25e-4,125e-4])# both backbone(for old) and dataset param
+    parser.add_argument('--trd_set',type=int,nargs = '*',default=[1e-4,2e-4,4e-4])#,25e-4,125e-4])# both backbone(for old) and dataset param
     parser.add_argument('--diff_type_set',type=int,nargs = '*',default=[0,1,2,3])# both backbone(for old) and dataset param
 
     # agast sift params
-    parser.add_argument('--agast_type_set',type=int,nargs = '*',default=['5_8'])#,25e-4,125e-4])# both backbone(for old) and dataset param
-    parser.add_argument('--agast_trd_set',type=int,nargs = '*',default=[5,10,15,20,25])# both backbone(for old) and dataset param,
+    parser.add_argument('--agast_type_set',type=int,nargs = '*',default=['5_8','OAST_9_16','7_12_d','7_12_s'])#,25e-4,125e-4])# both backbone(for old) and dataset param
+    parser.add_argument('--agast_trd_set',type=int,nargs = '*',default=[5,10,15])# both backbone(for old) and dataset param,
 
 
 

@@ -121,8 +121,6 @@ def evaluate_keypoint_net_syth_data_sp(data_loader, sp_model,  top_k, use_color=
                 avg_error.append(avg_err)
                 success_count.append(success_cnt)
                 # sys.exit()
-    print(N_1)
-
     return np.nanmean(N_1),np.nanmean(N_2),np.nanmean(repeatability), np.nanmean(localization_err), \
            np.nanmean(fail_cnt),np.nanmean(avg_err),np.nanmean(success_count)
     #
