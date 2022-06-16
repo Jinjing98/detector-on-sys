@@ -11,8 +11,6 @@ dataset_dir = args.dataset_prefix
 sp_model = get_sp_model(args)
 
 def main():
-
-
     # init data
     hp_dataset = syth_dataset(root_dir=dataset_dir, use_color=True)
     data_loader = DataLoader(hp_dataset,
